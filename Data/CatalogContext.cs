@@ -11,23 +11,11 @@ namespace Catalog.Api.Data
         
         public CatalogContext(IConfiguration configuration)
         {
-            var settings = new MongoClientSettings
-            {
-                Credential = MongoCredential.CreateCredential(
-                     databaseName:configuration.GetValue<string>("DatabaseStrings:DatabaseName"),
-                     username:configuration.GetValue<string>("DatabaseStrings:UserName"),
-                     password:configuration.GetValue<string>("DatabaseStrings:Password")
-                    ),
-                Server = new MongoServerAddress(
-                     host:configuration.GetValue<string>("DatabaseStrings:Host"),
-                     port:configuration.GetValue<int>("DatabaseStrings:Port")
-                    ),
-            };
-            var client = new MongoClient(settings);
+            var client = new MongoClient(configuration.GetValue<string>("DatabaseStrings:ConnectionString"));
 
             var database = client.GetDatabase(configuration.GetValue<string>("DatabaseStrings:DatabaseName"));
 
-           Products = database.GetCollection<Product>(configuration.GetValue<string>("DatabaseStrings:CollectionName"));
+           Products = database.GetCollection<Product>(configuration.GetValue<string>("DatabaseStrings:ProductsCollectionName"));
            
            CatalogContextSeed.SeedData(Products);
         }
